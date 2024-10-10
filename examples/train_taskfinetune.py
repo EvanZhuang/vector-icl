@@ -1,7 +1,4 @@
 import sys
-from slerp import slerp
-
-# load a LLAMA3 Model First
 import numpy as np
 import transformers
 import torch
@@ -19,12 +16,8 @@ from huggingface_hub import hf_hub_download, snapshot_download
 
 from scripts.prompts import get_prompts, get_verbalizer, get_preprompts, get_instructions
 import tqdm, argparse
-from modeling_projector import ProjectorConfig, LinearProjector, OrthoProjector, MLPProjector, random_orthogonal_matrix
-from inversion_eval import batch_encode
+from modeling_projector import ProjectorConfig, LinearProjector, MLPProjector
 from sentence_transformers import SentenceTransformer
-
-
-torch.multiprocessing.set_sharing_strategy('file_system')
 
 
 def parse_args():
