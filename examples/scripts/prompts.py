@@ -12,18 +12,8 @@ from os.path import dirname, basename, join
 path_to_repo = dirname(dirname(os.path.abspath(__file__)))
 
 
-def get_instructions(dataset_name: str):
-    if dataset_name in ["stanfordnlp/sst2", "rotten_tomatoes", "stanfordnlp/imdb"]:
-        return "the sentiment (positive, negative) of the previous sentence is:"
-    elif dataset_name in ["dair-ai/emotion"]:
-        return "the sentiment (sadness, joy, love, anger, fear, surprise) of the previous sentence is:"
-    elif dataset_name in ["financial_phrasebank"]:
-        return "the sentiment (positive, neutral, negative) of the previous sentence is:"
-    else:
-        raise ValueError("need to set instructions in get_instructions!")
-
-
 def get_verbalizer(dataset_name):
+    dataset_name = dataset_name.split("/")[-1]
 
     VERB_0 = {" negative.": 0, " positive.": 1}
     VERB_1 = {
@@ -58,10 +48,10 @@ def get_verbalizer(dataset_name):
     VERB_LIST_DEFAULT = [VERB_0, VERB_1]
 
     DATA_OUTPUT_STRINGS = {
-        "stanfordnlp/sst2": VERB_0,
+        "sst2": VERB_0,
         "rotten_tomatoes": VERB_0,
-        "stanfordnlp/imdb": VERB_0,
-        "dair-ai/emotion": VERB_EMOTION_0,
+        "imdb": VERB_0,
+        "emotion": VERB_EMOTION_0,
         "financial_phrasebank": VERB_FFB_0
     }
 

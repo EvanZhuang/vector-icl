@@ -43,7 +43,7 @@ We show examples of using Vector-ICL at text-based tasks over here (Updating in 
 | Fituning Projector | [example script](examples/example_scripts/text_finetune.sh)     |
 | Evaluating text classification  | [example script](examples/example_scripts/text_inference_classification.sh) |
 | Evaluating text generation  | [example script](examples/example_scripts/text_inference_generations.sh) |
-| Evaluating ICl Baselines  | [example script](examples/example_scripts/text_inference_baseline.sh) |
+| Evaluating ICL Baselines  | [example script](examples/example_scripts/text_inference_baseline.sh) |
 
 
 ## Questions?

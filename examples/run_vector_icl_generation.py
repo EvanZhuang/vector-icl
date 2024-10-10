@@ -37,7 +37,7 @@ from datasets.utils.logging import disable_progress_bar
 disable_progress_bar()
 import numpy as np
 
-from scripts.prompts import get_prompts, get_verbalizer, get_preprompts, get_instructions
+from scripts.prompts import get_verbalizer
 from embedding_merge import few_shot_embedding_icl, few_shot_embedding_icl_generation
 from modeling_projector import LinearProjector, ProjectorConfig, MLPProjector, EncoderWrapper
 

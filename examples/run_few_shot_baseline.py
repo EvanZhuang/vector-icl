@@ -1,27 +1,3 @@
-#!/usr/bin/env python
-# coding=utf-8
-# Copyright 2021 The HuggingFace Inc. team. All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-"""
-Fine-tuning the library models for causal language modeling (GPT, GPT-2, CTRL, ...)
-on a text file or a dataset without using HuggingFace Trainer.
-
-Here is the full list of checkpoints on the hub that can be fine-tuned by this script:
-https://huggingface.co/models?filter=text-generation
-"""
-# You can also adapt this script on your own causal language modeling task. Pointers for this are left as comments.
-
 import argparse
 import json
 import logging
@@ -61,7 +37,7 @@ from datasets.utils.logging import disable_progress_bar
 disable_progress_bar()
 import numpy as np
 
-from scripts.prompts import get_prompts, get_verbalizer, get_preprompts, get_instructions
+from scripts.prompts import get_verbalizer
 from embedding_merge import few_shot_embedding_icl, few_shot_embedding_icl_generation, few_shot_embedding_icl_generation_baseline
 from modeling_projector import LinearProjector, ProjectorConfig, MLPProjector
 
@@ -508,13 +484,8 @@ def main():
 
     metric_bleu = evaluate.load("sacrebleu")
     metric_rouge = evaluate.load("rouge")
-    look_in_the_middle_metric = evaluate.load("sacrebleu")
-    model_preds_per_prompt = []
-    output_labels = []
     if accelerator.is_main_process:
         pbar = tqdm(total=len(eval_dataloader))
-
-    prompt_merge = few_shot_embedding_icl_generation_baseline
 
     if args.task_type == "sentiment_analysis":
         prefix = "("
@@ -536,7 +507,7 @@ def main():
         model_preds = []
         input_embeddings, attn_masks, input_locs = [], [], []
         with torch.no_grad() and autocast(dtype=torch.bfloat16):
-            prompt_embed, attn_masks, input_lens_lst = prompt_merge(model_module, tokenizer, few_shot_dataset=raw_datasets["train"], n_shot=args.n_shot, n_prompt=args.n_prompt, max_seq_length=args.max_seq_length,  embed_model=embed_model, projector=linear_projector, prefix=prefix, postfix=postfix)
+            prompt_embed, attn_masks, input_lens_lst = few_shot_embedding_icl_generation_baseline(model_module, tokenizer, few_shot_dataset=raw_datasets["train"], n_shot=args.n_shot, n_prompt=args.n_prompt, max_seq_length=args.max_seq_length,  embed_model=embed_model, projector=linear_projector, prefix=prefix, postfix=postfix)
             
             inputs_embeds = model.get_input_embeddings()(tokenizer(data["text"][0], return_tensors="pt", padding=False, truncation=False, add_special_tokens=False)['input_ids'].type(torch.LongTensor).to(model.device))
             pre_indicator_embeds = model.get_input_embeddings()(tokenizer(prefix, return_tensors="pt", padding=False, truncation=False, add_special_tokens=False)['input_ids'].to(model.device))
@@ -552,7 +523,6 @@ def main():
         
         metric_bleu.add(prediction=model_pred, reference=data["label"])
         metric_rouge.add(prediction=model_pred, reference=data["label"])
-        look_in_the_middle_metric.add(prediction=model_pred, reference=data["label"])
         output_and_ground_truth.append({'model_pred': model_pred,"ground_truth": data["label"]})
 
         if accelerator.is_main_process:

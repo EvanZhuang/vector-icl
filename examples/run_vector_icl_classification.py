@@ -62,7 +62,7 @@ from datasets.utils.logging import disable_progress_bar
 disable_progress_bar()
 import numpy as np
 
-from scripts.prompts import get_prompts, get_verbalizer, get_preprompts, get_instructions
+from scripts.prompts import get_verbalizer
 from embedding_merge import few_shot_embedding_icl
 from modeling_projector import LinearProjector, ProjectorConfig, MLPProjector, EncoderWrapper
 
@@ -569,20 +569,8 @@ def main():
 
     # Get the verbalizer and prompts
     verbalizer = get_verbalizer(args.dataset_name)
+    prompts = None
 
-    if args.prompt_type == "right":
-        prompts = get_prompts(args.dataset_name)
-    else:
-        prompts = get_preprompts(args.dataset_name)
-
-    if args.n_prompt == "max":
-        args.n_prompt = len(prompts)
-    else:
-        args.n_prompt = min(int(args.n_prompt), len(prompts))
-    prompts = prompts[:args.n_prompt]
-    prompts = [x.lower().strip() for x in prompts]
-
-    instruction = get_instructions(args.dataset_name)
     # Process verbalizer
     target_verbalizer = {}
     few_shot_verbalizer = {}
@@ -617,16 +605,13 @@ def main():
     if accelerator.is_main_process:
         pbar = tqdm(total=len(eval_dataloader))
 
-    prompt_merge = few_shot_embedding_icl
-    model_module = model
-
     print("Number of data points per rank: ", len(eval_dataloader), accelerator.num_processes)
     for data_ctr, data in enumerate(eval_dataloader):
         # we do a prompt merge per data 
         model_preds = []
         input_embeddings, attn_masks, input_locs = [], [], []
         with torch.no_grad() and autocast(dtype=torch.bfloat16):
-            prompt_embed, attn_masks, input_lens_lst = prompt_merge(model_module, tokenizer, prompts, data["text"][0], few_shot_dataset=raw_datasets["train"], verbalizer=few_shot_verbalizer, n_shot=args.n_shot, n_prompt=args.n_prompt, match_position=True, special_token=None, pad_style=args.pad_style, max_seq_length=args.max_seq_length,  embed_model=embed_model, projector=linear_projector)
+            prompt_embed, attn_masks, input_lens_lst = few_shot_embedding_icl(model, tokenizer, prompts, data["text"][0], few_shot_dataset=raw_datasets["train"], verbalizer=few_shot_verbalizer, n_shot=args.n_shot, n_prompt=args.n_prompt, match_position=True, special_token=None, pad_style=args.pad_style, max_seq_length=args.max_seq_length,  embed_model=embed_model, projector=linear_projector)
         
         inputs_embeds = embed_model.encode([data["text"][0]]).type(model.dtype).to(model.device)
         inputs_embeds = linear_projector(inputs_embeds)
@@ -658,9 +643,10 @@ def main():
                     max_likelihood = likelihood_target
                     model_pred_class = target_verbalizer[key]
 
-        output_labels.append(data["label"].clone())
-        metric.add(prediction=model_pred_class, reference=data["label"])
-        metric_f1.add(prediction=model_pred_class, reference=data["label"])
+        label_truth = verbalizer[data['label'][0]]
+        output_labels.append(label_truth)
+        metric.add(prediction=model_pred_class, reference=label_truth)
+        metric_f1.add(prediction=model_pred_class, reference=label_truth)
 
         if accelerator.is_main_process:
             pbar.update(1)

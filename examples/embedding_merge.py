@@ -27,12 +27,12 @@ def few_shot_embedding_icl(model, tokenizer, prompts, input_text, few_shot_datas
     main_text_lst = []
     main_label_lst = []
     for data_class in verbalizer.keys():
-        sampled_few_shot_dataset = few_shot_dataset.filter(lambda x: x['label'] == data_class)
+        sampled_few_shot_dataset = few_shot_dataset.filter(lambda x: x['label'] == verbalizer[data_class])
         sampled_few_shot_dataset = sampled_few_shot_dataset.shuffle()
         sampled_few_shot_dataset = sampled_few_shot_dataset.select(range(n_shot))
         for few_shot_ctr, example in enumerate(sampled_few_shot_dataset):
             main_text_lst.append(example['text'].strip())
-            main_label_lst.append(verbalizer[example['label']])
+            main_label_lst.append(example['label'])
 
 
     # randomize the order
