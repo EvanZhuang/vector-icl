@@ -1,36 +1,67 @@
-This is an evolving repo optimized for machine-learning projects aimed at designing a new algorithm. They require sweeping over different hyperparameters, comparing to baselines, and iteratively refining an algorithm. Based of [cookiecutter-data-science](https://github.com/drivendata/cookiecutter-data-science).
+<h1 align="center"> ↖️ Vector-ICL ↗️ </h1>
+<p align="center"> <b>Vector-ICL: In-context Learning with Continuous Vector Representations</b>  (<a href="https://arxiv.org/abs/2410.05629">Zhuang et al., arxiv</a>). 
+</p>
 
-# Organization
-- `project_name`: should be renamed, contains main code for modeling (e.g. model architecture)
-- `experiments`: code for runnning experiments (e.g. loading data, training models, evaluating models)
-- `scripts`: scripts for hyperparameter sweeps (python scripts that launch jobs in `experiments` folder with different hyperparams)
-- `notebooks`: jupyter notebooks for analyzing results and making figures
-- `tests`: unit tests
+<p align="center">
+  <img src="https://img.shields.io/badge/license-mit-blue.svg">
+  <img src="https://img.shields.io/badge/python-3.7+-blue">
+</p>  
 
-# Setup
-- first, rename `project_name` to your project name and modify `setup.py` accordingly
-- clone and run `pip install -e .`, resulting in a package named `project_name` that can be imported
-    - see `setup.py` for dependencies, not all are required
-- example run: run `python scripts/01_train_basic_models.py` (which calls `experiments/01_train_model.py` then view the results in `notebooks/01_model_results.ipynb`
-- keep tests upated and run using `pytest`
+<p align="center"> Vector-ICL is a way of conducting in-context learning with data of any forms. <br>
+<strong>1. Encode data into embedding vector</strong><br>
+<strong>2. Project the vector into LLMs' representation space</strong><br>
+<strong>3. Build the context with the projected embeddings</strong>
+</p>
 
-# Features
-- scripts sweep over hyperparameters using easy-to-specify python code
-- experiments automatically cache runs that have already completed
-    - caching uses the (**non-default**) arguments in the argparse namespace
-- notebooks can easily evaluate results aggregated over multiple experiments using pandas
 
-# Guidelines
-- See some useful packages [here](https://csinva.io/blog/misc/ml_coding_tips)
-- Avoid notebooks whenever possible (ideally, only for analyzing results, making figures)
-- Paths should be specified relative to a file's location (e.g. `os.path.join(os.path.dirname(__file__), 'data')`)
-- Naming variables: use the main thing first followed by the modifiers (e.g. `X_train`, `acc_test`)
-    - binary arguments should start with the word "use" (e.g. `--use_caching`) and take values 0 or 1
-- Use logging instead of print
-- Use argparse and sweep over hyperparams using python scripts (or custom things, like [amulet](https://amulet-docs.azurewebsites.net/main/index.html))
-    - Note, arguments get passed as strings so shouldn't pass args that aren't primitives or a list of primitives (more complex structures should be handled in the experiments code)
-- Each run should save a single pickle file of its results
-- All experiments that depend on each other should run end-to-end with one script (caching things along the way)
-- Keep updated requirements in setup.py
-- Follow sklearn apis whenever possible
-- Use Huggingface whenever possible, then pytorch
+<p align="center">
+  <img src="assets/gicl_pipeline.svg">
+</p>  
+
+<p align="center">
+And we only need to train a light-weight projector (a linear matrix works most of the time!). <br>
+(a) Pretraining with next token prediction (such as language modelling objective) enables Vector-ICL, <br>
+(b) task finetunes further improves LLMs' ability to conduct Vector-ICL.
+</p>
+
+<p align="center">
+  <img src="assets/gicl_training_pipeline.svg">
+</p>  
+
+<p align="center">
+We show that Vector-ICL works for a wide range of modalities and tasks, surpassing few-shot ICL and domain-specific models and tunings. <br>
+<img src="assets/main_plot.svg">
+</p>  
+
+## Example Usage
+
+We show examples of using Vector-ICL at text-based tasks over here (Updating in Progress):
+
+| Example    | Script |
+| -------- | ------- |
+| Pretraining Projector  | [example script](examples/example_scripts/text_pretrain.sh)    |
+| Fituning Projector | [example script](examples/example_scripts/text_finetune.sh)     |
+| Evaluating text classification  | [example script](examples/example_scripts/text_inference_classification.sh) |
+| Evaluating text generation  | [example script](examples/example_scripts/text_inference_generations.sh) |
+| Evaluating ICl Baselines  | [example script](examples/example_scripts/text_inference_baseline.sh) |
+
+
+## Questions?
+
+If you have any questions related to the code or the paper, feel free to reach out to us at y5zhuang@ucsd.edu.
+
+
+## Citation
+
+If you find our paper and code useful, please cite us:
+```r
+@misc{zhuang2024vectoriclincontextlearningcontinuous,
+      title={Vector-ICL: In-context Learning with Continuous Vector Representations}, 
+      author={Yufan Zhuang and Chandan Singh and Liyuan Liu and Jingbo Shang and Jianfeng Gao},
+      year={2024},
+      eprint={2410.05629},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2410.05629}, 
+}
+```
