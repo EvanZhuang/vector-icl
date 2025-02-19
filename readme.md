@@ -1,5 +1,5 @@
 <h1 align="center"> ↖️ Vector-ICL ↗️ </h1>
-<p align="center"> <b>Vector-ICL: In-context Learning with Continuous Vector Representations</b>  (<a href="https://arxiv.org/abs/2410.05629">Zhuang et al., arxiv</a>). 
+<p align="center"> <b>Vector-ICL: In-context Learning with Continuous Vector Representations</b>  (<a href="https://arxiv.org/abs/2410.05629">Zhuang et al., ICLR 2025</a>). 
 </p>
 
 <p align="center">
@@ -35,7 +35,7 @@ We show that Vector-ICL works for a wide range of modalities and tasks, surpassi
 
 ## Example Usage
 
-We show examples of using Vector-ICL at text-based tasks over here (Updating in Progress):
+We show examples of using Vector-ICL at text-based tasks over here:
 
 | Example    | Script |
 | -------- | ------- |
@@ -45,6 +45,7 @@ We show examples of using Vector-ICL at text-based tasks over here (Updating in 
 | Evaluating text generation  | [example script](examples/example_scripts/text_inference_generations.sh) |
 | Evaluating ICL Baselines  | [example script](examples/example_scripts/text_inference_baseline.sh) |
 
+For cross-modal Vector-ICL, the scripts are provided in this [folder](examples/example_scripts) with training and inferencing pipelines.
 
 ## Questions?
 
@@ -55,13 +56,12 @@ If you have any questions related to the code or the paper, feel free to reach o
 
 If you find our paper and code useful, please cite us:
 ```r
-@misc{zhuang2024vectoriclincontextlearningcontinuous,
-      title={Vector-ICL: In-context Learning with Continuous Vector Representations}, 
-      author={Yufan Zhuang and Chandan Singh and Liyuan Liu and Jingbo Shang and Jianfeng Gao},
-      year={2024},
-      eprint={2410.05629},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL},
-      url={https://arxiv.org/abs/2410.05629}, 
+@inproceedings{
+zhuang2025vectoricl,
+title={Vector-{ICL}: In-context Learning with Continuous Vector Representations},
+author={Yufan Zhuang and Chandan Singh and Liyuan Liu and Jingbo Shang and Jianfeng Gao},
+booktitle={The Thirteenth International Conference on Learning Representations},
+year={2025},
+url={https://openreview.net/forum?id=xing7dDGh3}
 }
 ```
