@@ -56,12 +56,10 @@ If you have any questions related to the code or the paper, feel free to reach o
 
 If you find our paper and code useful, please cite us:
 ```r
-@inproceedings{
-zhuang2025vectoricl,
-title={Vector-{ICL}: In-context Learning with Continuous Vector Representations},
-author={Yufan Zhuang and Chandan Singh and Liyuan Liu and Jingbo Shang and Jianfeng Gao},
-booktitle={The Thirteenth International Conference on Learning Representations},
-year={2025},
-url={https://openreview.net/forum?id=xing7dDGh3}
+@article{zhuang2024vector,
+  title={Vector-ICL: In-context Learning with Continuous Vector Representations},
+  author={Zhuang, Yufan and Singh, Chandan and Liu, Liyuan and Shang, Jingbo and Gao, Jianfeng},
+  journal={arXiv preprint arXiv:2410.05629},
+  year={2024}
 }
 ```
